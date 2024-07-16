@@ -1,8 +1,16 @@
-package main 
+package main
 
-import "fmt"
+import (
+	"fmt"
+	"golang_listrik/config"
+)
 
-func main()
-{
+func main() {
+	// var db *sql.DB
+	// db = config.NewDb()
+	config.NewDb()
+
+	// row, err := db.Query("SELECT version()")
+
 	fmt.Println("status ok")
 }
