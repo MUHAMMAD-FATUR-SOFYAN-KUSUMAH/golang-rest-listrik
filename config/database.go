@@ -3,6 +3,7 @@ package config
 import (
 	"database/sql"
 	"fmt"
+	"golang_listrik/helper"
 	"time"
 
 	_ "github.com/lib/pq"
@@ -13,9 +14,7 @@ import (
 func NewDb() *sql.DB {
 	env, err := godotenv.Read(".env")
 
-	if err != nil {
-		fmt.Println("Error loading .env file")
-	}
+	helper.Err(err)
 
 	var (
 		host = env["HOST"]
@@ -29,15 +28,7 @@ func NewDb() *sql.DB {
 
 	dbpostgres, errdb := sql.Open("postgres", postgresql)
 
-	if errdb != nil {
-		panic("not connected")
-	}
-
-	errping := dbpostgres.Ping()
-
-	if errping != nil {
-		panic("not connected")
-	}
+	helper.Err(errdb)
 
 	dbpostgres.SetMaxIdleConns(5)
 	dbpostgres.SetMaxOpenConns(20)
