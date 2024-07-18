@@ -24,7 +24,7 @@ func (tf *TarifRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain
 	var model_tarif []domain.Tarifkwh
 	for row.Next() {
 		gory := domain.Tarifkwh{}
-		err := row.Scan(&gory.Id, &gory.Daya, &gory.TarifPerKwh)
+		err := row.Scan(&gory.UuidTarif, &gory.Daya, &gory.TarifPerKwh)
 		helper.Err(err)
 		model_tarif = append(model_tarif, gory)
 	}
