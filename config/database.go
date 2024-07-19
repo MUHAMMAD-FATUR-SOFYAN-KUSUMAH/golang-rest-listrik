@@ -24,11 +24,16 @@ func NewDb() *sql.DB {
 		db   = env["DBNAME"]
 	)
 
-	postgresql := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, pass, db)
+	fmt.Println(pass)
+
+	postgresql := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s", user, pass, host, port, db)
 
 	dbpostgres, errdb := sql.Open("postgres", postgresql)
 
 	helper.Err(errdb)
+	errping := dbpostgres.Ping()
+
+	fmt.Println(errping)
 
 	dbpostgres.SetMaxIdleConns(5)
 	dbpostgres.SetMaxOpenConns(20)

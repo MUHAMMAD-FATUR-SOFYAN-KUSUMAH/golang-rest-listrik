@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"database/sql"
+	"golang_listrik/helper"
 	"golang_listrik/model/request"
 	"golang_listrik/model/response"
 	"golang_listrik/repository"
@@ -17,27 +18,32 @@ type TarifServicesImpl struct {
 }
 
 // Delete implements TarifServices.
-func (*TarifServicesImpl) Delete(ctx context.Context, tarif request.TarifSearch) {
+func (s *TarifServicesImpl) Delete(ctx context.Context, tarif request.TarifSearch) {
 	panic("unimplemented")
 }
 
 // FIndAll implements TarifServices.
-func (*TarifServicesImpl) FIndAll(ctx context.Context) []response.TarifResponse {
-	panic("unimplemented")
+func (s *TarifServicesImpl) FIndAll(ctx context.Context) []response.TarifResponse {
+	tx, err := s.DB.Begin()
+	helper.Err(err)
+	defer helper.Tx(tx)
+
+	tarif := s.TarifRepository.FindAll(ctx, tx)
+	return helper.TarifResponses(tarif)
 }
 
 // FindById implements TarifServices.
-func (*TarifServicesImpl) FindById(ctx context.Context, id request.TarifSearch) response.TarifResponse {
+func (s *TarifServicesImpl) FindById(ctx context.Context, id request.TarifSearch) response.TarifResponse {
 	panic("unimplemented")
 }
 
 // Save implements TarifServices.
-func (*TarifServicesImpl) Save(ctx context.Context, tarif request.TarifSave) {
+func (s *TarifServicesImpl) Save(ctx context.Context, tarif request.TarifSave) {
 	panic("unimplemented")
 }
 
 // Update implements TarifServices.
-func (*TarifServicesImpl) Update(ctx context.Context, tarif request.TarifUpdated) {
+func (s *TarifServicesImpl) Update(ctx context.Context, tarif request.TarifUpdated) {
 	panic("unimplemented")
 }
 

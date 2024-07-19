@@ -10,20 +10,20 @@ import (
 type TarifRepositoryImpl struct{}
 
 // Delete implements TarifRepository.
-func (tf *TarifRepositoryImpl) Delete(ctx context.Context, tx *sql.Tx, tarif domain.Tarifkwh) {
+func (tf *TarifRepositoryImpl) Delete(ctx context.Context, tx *sql.Tx, tarif domain.Tarif) {
 	panic("unimplemented")
 }
 
 // FindAll implements TarifRepository.
-func (tf *TarifRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.Tarifkwh {
-	sql := "SELECT id_tarif, daya, tarifperkwh FROM tarif"
+func (tf *TarifRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.Tarif {
+	sql := "SELECT uuid_tarif, daya, tarifperkwh FROM tarif"
 	row, err := tx.QueryContext(ctx, sql)
 	helper.Err(err)
 	defer row.Close()
 
-	var model_tarif []domain.Tarifkwh
+	var model_tarif []domain.Tarif
 	for row.Next() {
-		gory := domain.Tarifkwh{}
+		var gory domain.Tarif
 		err := row.Scan(&gory.UuidTarif, &gory.Daya, &gory.TarifPerKwh)
 		helper.Err(err)
 		model_tarif = append(model_tarif, gory)
@@ -33,17 +33,17 @@ func (tf *TarifRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain
 }
 
 // FindById implements TarifRepository.
-func (tf *TarifRepositoryImpl) FindById(ctx context.Context, tx *sql.Tx, id int32) (domain.Tarifkwh, error) {
+func (tf *TarifRepositoryImpl) FindById(ctx context.Context, tx *sql.Tx, id int32) (domain.Tarif, error) {
 	panic("unimplemented")
 }
 
 // Save implements TarifRepository.
-func (tf *TarifRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, tarif domain.Tarifkwh) {
+func (tf *TarifRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, tarif domain.Tarif) {
 	panic("unimplemented")
 }
 
 // Update implements TarifRepository.
-func (tf *TarifRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, tarif domain.Tarifkwh) {
+func (tf *TarifRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, tarif domain.Tarif) {
 	panic("unimplemented")
 }
 
