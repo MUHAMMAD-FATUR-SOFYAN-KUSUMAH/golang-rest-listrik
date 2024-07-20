@@ -1,10 +1,12 @@
 package controller
 
 import (
+	"fmt"
 	"golang_listrik/helper"
 	"golang_listrik/model/response"
 	"golang_listrik/services"
 	"net/http"
+	"time"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -20,6 +22,7 @@ func (*tarifControllerImpl) Deleted(w http.ResponseWriter, r *http.Request, p ht
 
 // FindAll implements TarifController.
 func (controller *tarifControllerImpl) FindAll(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	start := time.Now()
 	categoryResponses := controller.Services.FIndAll(request.Context())
 	webResponse := response.WebResponse{
 		Code:   200,
@@ -28,6 +31,8 @@ func (controller *tarifControllerImpl) FindAll(writer http.ResponseWriter, reque
 	}
 
 	helper.Encode_Json(writer, webResponse)
+	duration := time.Since(start)
+	fmt.Printf("exampleFunction took %v\n", duration)
 }
 
 // FindById implements TarifController.
