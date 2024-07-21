@@ -39,7 +39,9 @@ func (tf *TarifRepositoryImpl) FindById(ctx context.Context, tx *sql.Tx, id int3
 
 // Save implements TarifRepository.
 func (tf *TarifRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, tarif domain.Tarif) {
-	panic("unimplemented")
+	uuid := helper.GenerateRandomToken()
+	sql := "INSERT INTO (daya, tarifperkwh, uuid_tarif) (?, ?, ?)"
+	tx.QueryContext(ctx, sql, tarif.Daya, tarif.TarifPerKwh, uuid)
 }
 
 // Update implements TarifRepository.
