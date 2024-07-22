@@ -12,6 +12,7 @@ func NewRouter(tarif controller.TarifController) *httprouter.Router {
 	router.GET("/api/tarif", tarif.FindAll)
 	router.POST("/api/tarif", tarif.Save)
 	router.DELETE("/api/tarif", tarif.Deleted)
+	router.PATCH("/api/tarif", tarif.Updated)
 
 	return router
 }

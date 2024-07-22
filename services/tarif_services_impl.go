@@ -71,8 +71,27 @@ func (s *TarifServicesImpl) Save(ctx context.Context, tarif request.TarifSave) {
 }
 
 // Update implements TarifServices.
-func (s *TarifServicesImpl) Update(ctx context.Context, tarif request.TarifUpdated) {
-	panic("unimplemented")
+func (s *TarifServicesImpl) Update(ctx context.Context, tarif request.TarifUpdated, done chan bool) {
+	err := s.Validate.StructCtx(ctx, tarif)
+	helper.Err(err)
+
+	db, errdb := s.DB.Begin()
+	helper.Err(errdb)
+
+	defer helper.Tx(db)
+
+	defer func() {
+		done <- true
+	}()
+
+	ModelTarif := domain.Tarif{
+		Daya:        int16(tarif.Daya),
+		TarifPerKwh: int32(tarif.TarifKwh),
+		UuidTarif:   tarif.Uuid,
+	}
+
+	s.TarifRepository.Update(ctx, db, ModelTarif)
+
 }
 
 func NewTarifServices(Tarif repository.TarifRepository, db *sql.DB, validate *validator.Validate) TarifServices {

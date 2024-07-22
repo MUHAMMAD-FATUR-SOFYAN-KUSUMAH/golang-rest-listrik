@@ -70,8 +70,23 @@ func (controller *tarifControllerImpl) Save(w http.ResponseWriter, r *http.Reque
 }
 
 // Updated implements TarifController.
-func (*tarifControllerImpl) Updated(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	panic("unimplemented")
+func (controller *tarifControllerImpl) Updated(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	chann := make(chan bool)
+	temp := request.TarifUpdated{}
+	helper.Decode_Json(r, &temp)
+
+	go controller.Services.Update(r.Context(), temp, chann)
+
+	WebResponse := response.WebResponse{
+		Code:   http.StatusAccepted,
+		Status: "accept",
+		Data:   "success save",
+	}
+
+	helper.Encode_Json(w, WebResponse)
+	defer func() {
+		<-chann
+	}()
 }
 
 func NewTarifControllerImpl(tarifServices services.TarifServices) TarifController {

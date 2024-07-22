@@ -52,7 +52,9 @@ func (tf *TarifRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, tarif domai
 
 // Update implements TarifRepository.
 func (tf *TarifRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, tarif domain.Tarif) {
-	panic("unimplemented")
+	sql := "UPDATE tarif SET daya=$1, tarifperkwh=$2 where uuid_tarif=$3"
+	_, err := tx.ExecContext(ctx, sql, tarif.Daya, tarif.TarifPerKwh, tarif.UuidTarif)
+	helper.Err(err)
 }
 
 func NewTarifRepository() TarifRepository {
