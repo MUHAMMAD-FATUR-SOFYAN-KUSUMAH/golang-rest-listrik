@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"golang_listrik/helper"
+	"golang_listrik/model/request"
 	"golang_listrik/model/response"
 	"golang_listrik/services"
 	"net/http"
@@ -16,8 +17,20 @@ type tarifControllerImpl struct {
 }
 
 // Deleted implements TarifController.
-func (*tarifControllerImpl) Deleted(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	panic("unimplemented")
+func (controller *tarifControllerImpl) Deleted(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	Temp := request.TarifSearch{}
+	helper.Decode_Json(r, &Temp)
+
+	ctx := r.Context()
+	controller.Services.Delete(ctx, Temp)
+
+	Response := response.WebResponse{
+		Code:   http.StatusAccepted,
+		Status: "accpeth",
+		Data:   "behasil menghapus",
+	}
+
+	helper.Encode_Json(w, Response)
 }
 
 // FindAll implements TarifController.
@@ -41,8 +54,19 @@ func (*tarifControllerImpl) FindById(w http.ResponseWriter, r *http.Request, p h
 }
 
 // Save implements TarifController.
-func (*tarifControllerImpl) Save(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	panic("unimplemented")
+func (controller *tarifControllerImpl) Save(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	TarifCreate := request.TarifSave{}
+	helper.Decode_Json(r, &TarifCreate)
+
+	controller.Services.Save(r.Context(), TarifCreate)
+
+	WebResponse := response.WebResponse{
+		Code:   http.StatusAccepted,
+		Status: "accept",
+		Data:   "success save",
+	}
+
+	helper.Encode_Json(w, WebResponse)
 }
 
 // Updated implements TarifController.
