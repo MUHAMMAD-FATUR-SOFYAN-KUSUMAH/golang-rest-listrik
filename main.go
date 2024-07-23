@@ -19,16 +19,19 @@ func main() {
 	validasi := validator.New()
 
 	tarifrepository := repository.NewTarifRepository()
+	levelreposiotry := repository.NewLevelRepository()
 
 	tarifServices := services.NewTarifServices(tarifrepository, db, validasi)
+	levelservices := services.NewLevelServices(levelreposiotry, db, validasi)
 
 	tarifcontroller := controller.NewTarifControllerImpl(tarifServices)
+	levelcontroller := controller.NewLevel(levelservices)
 
-	router := router.NewRouter(tarifcontroller)
+	routers := router.NewRouter(tarifcontroller, levelcontroller)
 
 	server := http.Server{
 		Addr:    "192.168.1.12:8080",
-		Handler: middelware.Newmiddelware(router),
+		Handler: middelware.Newmiddelware(routers),
 	}
 
 	fmt.Println("status ok")

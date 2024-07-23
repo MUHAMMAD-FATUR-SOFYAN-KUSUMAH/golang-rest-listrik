@@ -41,7 +41,7 @@ func (s *TarifServicesImpl) FIndAll(ctx context.Context) []response.TarifRespons
 	tx, err := s.DB.Begin()
 	helper.Err(err)
 	defer helper.Tx(tx)
-
+	defer close(chann)
 	go s.TarifRepository.FindAll(ctx, tx, chann)
 
 	tarif := <-chann
@@ -57,6 +57,7 @@ func (s *TarifServicesImpl) FindById(ctx context.Context, id request.TarifSearch
 	res := helper.TarifReponse(<-chann)
 
 	defer helper.Tx(tx)
+	defer close(chann)
 
 	return res
 }
