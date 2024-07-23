@@ -50,7 +50,15 @@ func (s *TarifServicesImpl) FIndAll(ctx context.Context) []response.TarifRespons
 
 // FindById implements TarifServices.
 func (s *TarifServicesImpl) FindById(ctx context.Context, id request.TarifSearch) response.TarifResponse {
-	panic("unimplemented")
+	tx, _ := s.DB.Begin()
+	chann := make(chan domain.Tarif)
+	go s.TarifRepository.FindById(ctx, tx, id.Uuid, chann)
+
+	res := helper.TarifReponse(<-chann)
+
+	defer helper.Tx(tx)
+
+	return res
 }
 
 // Save implements TarifServices.

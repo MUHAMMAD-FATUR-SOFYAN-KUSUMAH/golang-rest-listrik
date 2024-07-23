@@ -10,6 +10,7 @@ func TarifReponse(tarif domain.Tarif) response.TarifResponse {
 		Daya:        tarif.Daya,
 		TarifPerKwh: tarif.TarifPerKwh,
 		UuidTarif:   tarif.UuidTarif,
+		Name:        tarif.Name,
 	}
 }
 

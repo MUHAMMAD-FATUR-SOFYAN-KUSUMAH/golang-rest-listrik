@@ -11,5 +11,5 @@ type TarifRepository interface {
 	Save(ctx context.Context, tx *sql.Tx, tarif domain.Tarif)
 	Update(ctx context.Context, tx *sql.Tx, tarif domain.Tarif)
 	Delete(ctx context.Context, tx *sql.Tx, tarif domain.Tarif)
-	FindById(ctx context.Context, tx *sql.Tx, id int32) (domain.Tarif, error)
+	FindById(ctx context.Context, tx *sql.Tx, id string, chann chan domain.Tarif)
 }

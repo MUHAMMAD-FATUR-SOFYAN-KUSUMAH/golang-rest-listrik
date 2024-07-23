@@ -49,8 +49,19 @@ func (controller *tarifControllerImpl) FindAll(writer http.ResponseWriter, reque
 }
 
 // FindById implements TarifController.
-func (*tarifControllerImpl) FindById(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	panic("unimplemented")
+func (controller *tarifControllerImpl) FindById(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	searchtarif := request.TarifSearch{}
+	helper.Decode_Json(r, &searchtarif)
+
+	res := controller.Services.FindById(r.Context(), searchtarif)
+
+	webResponse := response.WebResponse{
+		Code:   http.StatusOK,
+		Status: "ok",
+		Data:   res,
+	}
+
+	helper.Encode_Json(w, webResponse)
 }
 
 // Save implements TarifController.
