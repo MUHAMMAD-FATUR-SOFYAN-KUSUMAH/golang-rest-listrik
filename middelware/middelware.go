@@ -12,7 +12,7 @@ var client = make(map[string]int)
 
 var ClientTimeout = make(map[string]time.Time)
 
-type authmiddelware struct {
+type Authmiddelware struct {
 	handler http.Handler
 }
 
@@ -24,13 +24,13 @@ func addcounter(ip string) {
 	client[ip]++
 }
 
-func Newmiddelware(handle http.Handler) *authmiddelware {
-	return &authmiddelware{
+func Newmiddelware(handle http.Handler) *Authmiddelware {
+	return &Authmiddelware{
 		handler: handle,
 	}
 }
 
-func (middel *authmiddelware) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+func (middel *Authmiddelware) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	ip, _, _ := net.SplitHostPort(request.RemoteAddr)
 	_, counter := client[ip]
 	if !counter {

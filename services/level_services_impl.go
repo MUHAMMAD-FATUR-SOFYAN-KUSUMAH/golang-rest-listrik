@@ -27,12 +27,14 @@ func (sv *LevelServicesImpl) Delete(ctx context.Context, level request.LevelSear
 	tx, err := sv.DB.Begin()
 	helper.Err(err)
 
-	defer close(onchan)
 	defer helper.Tx(tx)
+	defer close(onchan)
 
 	go sv.LevelRepository.Delete(ctx, tx, domain.Level{
 		Id_level: level.Id,
 	}, onchan)
+
+	<-onchan
 }
 
 // FIndAll implements LevelServices.
