@@ -2,6 +2,8 @@ package router
 
 import (
 	"golang_listrik/controller"
+	"golang_listrik/helper"
+	"golang_listrik/middelware"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -9,7 +11,7 @@ import (
 func NewRouter(tarif controller.TarifController, level controller.LevelController) *httprouter.Router {
 	router := httprouter.New()
 
-	router.GET("/api/tarif", tarif.FindAll)
+	router.GET("/api/tarif", helper.WrapMiddelware(httprouter.Handle(tarif.FindAll), middelware.LoggingMiddleware))
 	router.POST("/api/tarif", tarif.Save)
 	router.DELETE("/api/tarif", tarif.Deleted)
 	router.PATCH("/api/tarif", tarif.Updated)

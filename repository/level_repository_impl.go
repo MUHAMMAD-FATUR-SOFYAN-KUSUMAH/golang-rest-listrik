@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"golang_listrik/helper"
 	"golang_listrik/model/domain"
 )
@@ -46,6 +47,7 @@ func (*LevelRepositoryImpl) FindById(ctx context.Context, tx *sql.Tx, id int, ch
 	temp := domain.Level{}
 	err := row.Scan(&temp.Id_level, &temp.Nama_level)
 	helper.Err(err)
+	fmt.Println(temp)
 
 	defer func() {
 		chann <- temp

@@ -3,9 +3,12 @@ package middelware
 import (
 	"golang_listrik/helper"
 	"golang_listrik/model/response"
+	"log"
 	"net"
 	"net/http"
 	"time"
+
+	"github.com/julienschmidt/httprouter"
 )
 
 var client = make(map[string]int)
@@ -27,6 +30,13 @@ func addcounter(ip string) {
 func Newmiddelware(handle http.Handler) *Authmiddelware {
 	return &Authmiddelware{
 		handler: handle,
+	}
+}
+
+func LoggingMiddleware(next httprouter.Handle) httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		log.Printf("Request received: %s %s", r.Method, r.URL.Path)
+		next(w, r, ps)
 	}
 }
 
