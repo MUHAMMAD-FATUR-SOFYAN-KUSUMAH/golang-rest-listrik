@@ -38,3 +38,20 @@ func LevelResponses(lv []domain.Level) []response.LevelResponse {
 
 	return temp
 }
+
+func UserReponse(user domain.User) response.UserResponse {
+	return response.UserResponse{
+		Id_user:    user.Id_user,
+		Username:   user.Username,
+		Name:       user.Name,
+		Role_level: user.Role_level.Nama_level,
+	}
+}
+
+func UserResponses(user []domain.User) []response.UserResponse {
+	var temp []response.UserResponse
+	for _, user := range user {
+		temp = append(temp, UserReponse(user))
+	}
+	return temp
+}

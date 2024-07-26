@@ -20,14 +20,17 @@ func main() {
 
 	tarifrepository := repository.NewTarifRepository()
 	levelreposiotry := repository.NewLevelRepository()
+	userrepository := repository.NewUserRepository()
 
 	tarifServices := services.NewTarifServices(tarifrepository, db, validasi)
 	levelservices := services.NewLevelServices(levelreposiotry, db, validasi)
+	userservices := services.NewUserServicesImpl(db, userrepository, validasi)
 
 	tarifcontroller := controller.NewTarifControllerImpl(tarifServices)
 	levelcontroller := controller.NewLevel(levelservices)
+	usercontroller := controller.NewUserController(userservices)
 
-	routers := router.NewRouter(tarifcontroller, levelcontroller)
+	routers := router.NewRouter(tarifcontroller, levelcontroller, usercontroller)
 
 	server := http.Server{
 		Addr:    "192.168.1.12:8080",

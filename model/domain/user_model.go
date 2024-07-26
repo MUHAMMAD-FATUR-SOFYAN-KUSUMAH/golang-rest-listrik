@@ -5,5 +5,6 @@ type User struct {
 	Username   string
 	Password   string
 	Name       string
+	Level      int
 	Role_level Level
 }
