@@ -55,3 +55,22 @@ func UserResponses(user []domain.User) []response.UserResponse {
 	}
 	return temp
 }
+
+func PelangganReponse(pelanggan domain.Pelanggan) response.PelangganResponse {
+	return response.PelangganResponse{
+		Id_pelanggan:   int32(pelanggan.Id_pelanggan),
+		Username:       pelanggan.Username,
+		Name_pelanggan: pelanggan.Name_pelanggan,
+		Nomor_kwh:      pelanggan.Nomor_kwh,
+		Alamat:         pelanggan.Alamat,
+		Tarif_name:     pelanggan.Tarif.Name,
+	}
+}
+
+func PelangganResponses(pelanggan []domain.Pelanggan) []response.PelangganResponse {
+	var temp []response.PelangganResponse
+	for _, pelanggan := range pelanggan {
+		temp = append(temp, PelangganReponse(pelanggan))
+	}
+	return temp
+}
