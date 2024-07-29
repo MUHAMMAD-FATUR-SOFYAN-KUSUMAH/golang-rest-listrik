@@ -12,7 +12,9 @@ type PelangganRepositoryImpl struct {
 
 // Delete implements PelangganRepository.
 func (*PelangganRepositoryImpl) Delete(ctx context.Context, tx *sql.Tx, pelanggan domain.Pelanggan) {
-	panic("unimplemented")
+	sql := "DELETE FROM public.pelanggan WHERE id_pelanggan = $1"
+	_, err := tx.ExecContext(ctx, sql, pelanggan.Id_pelanggan)
+	helper.Err(err)
 }
 
 // FindAll implements PelangganRepository.
@@ -51,12 +53,17 @@ func (*PelangganRepositoryImpl) FindById(ctx context.Context, tx *sql.Tx, id int
 
 // Save implements PelangganRepository.
 func (*PelangganRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, pelanggan domain.Pelanggan) {
-	panic("unimplemented")
+	GeneretNumber := helper.GenerateRandomNumeber()
+	sql := "INSERT INTO pelanggan ( username, nama_pelanggan, nomor_kwh, alamat, tarif, password) VALUES ($1, $2, $3, $4, $5, $6)"
+	_, err := tx.ExecContext(ctx, sql, pelanggan.Username, pelanggan.Name_pelanggan, GeneretNumber, pelanggan.Alamat, pelanggan.Tarif_id, pelanggan.Password)
+	helper.Err(err)
 }
 
 // Update implements PelangganRepository.
 func (*PelangganRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, pelanggan domain.Pelanggan) {
-	panic("unimplemented")
+	sql := "UPDATE pelanggan SET username = $1, nama_pelanggan = $2, password = $3, alamat = $4, tarif = $5 WHERE id_pelanggan = $6"
+	_, err := tx.ExecContext(ctx, sql, pelanggan.Username, pelanggan.Name_pelanggan, pelanggan.Password, pelanggan.Alamat, pelanggan.Tarif_id, pelanggan.Id_pelanggan)
+	helper.Err(err)
 }
 
 func NewPelangganRepsitoryImpl() PelangganRepository {

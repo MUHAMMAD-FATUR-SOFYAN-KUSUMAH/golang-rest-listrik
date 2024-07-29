@@ -9,7 +9,7 @@ import (
 type PelangganController interface {
 	FindAll(writer http.ResponseWriter, request *http.Request, p httprouter.Params)
 	FindById(writer http.ResponseWriter, request *http.Request, p httprouter.Params)
-	Save(writer http.ResponseWriter, request *http.Request)
-	Update(writer http.ResponseWriter, request *http.Request)
-	Delete(writer http.ResponseWriter, request *http.Request)
+	Save(writer http.ResponseWriter, request *http.Request, p httprouter.Params)
+	Update(writer http.ResponseWriter, request *http.Request, p httprouter.Params)
+	Delete(writer http.ResponseWriter, request *http.Request, p httprouter.Params)
 }

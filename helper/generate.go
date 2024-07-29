@@ -10,3 +10,12 @@ func GenerateRandomToken() string {
 	}
 	return string(token)
 }
+
+func GenerateRandomNumeber() string {
+	letters := []rune("0123456789")
+	token := make([]rune, 10)
+	for i := range token {
+		token[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(token)
+}

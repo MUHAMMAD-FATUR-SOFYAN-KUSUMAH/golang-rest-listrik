@@ -19,8 +19,13 @@ type PelangganServicesImpl struct {
 }
 
 // Delete implements PelangganServices.
-func (*PelangganServicesImpl) Delete(ctx context.Context, pelanggan request.UserSearch) {
-	panic("unimplemented")
+func (services *PelangganServicesImpl) Delete(ctx context.Context, pelanggan request.PelangganRequest) {
+	err := services.Validate.Struct(pelanggan)
+	helper.Err(err)
+	tx, errdb := services.DB.Begin()
+	helper.Err(errdb)
+	defer helper.Tx(tx)
+	services.PelangganRepository.Delete(ctx, tx, domain.Pelanggan{Id_pelanggan: pelanggan.Id})
 }
 
 // FindAll implements PelangganServices.
@@ -52,13 +57,36 @@ func (s *PelangganServicesImpl) FindById(ctx context.Context, id int) response.P
 }
 
 // Save implements PelangganServices.
-func (*PelangganServicesImpl) Save(ctx context.Context, pelanggan request.AddPelanggan) {
-	panic("unimplemented")
+func (services *PelangganServicesImpl) Save(ctx context.Context, pelanggan request.AddPelanggan) {
+	tx, _ := services.DB.Begin()
+	err := services.Validate.Struct(pelanggan)
+	helper.Err(err)
+
+	defer helper.Tx(tx)
+	services.PelangganRepository.Save(ctx, tx, domain.Pelanggan{
+		Username:       pelanggan.Username,
+		Password:       pelanggan.Password,
+		Name_pelanggan: pelanggan.Name,
+		Alamat:         pelanggan.Alamat,
+		Tarif_id:       pelanggan.Tarif_id,
+	})
 }
 
 // Update implements PelangganServices.
-func (*PelangganServicesImpl) Update(ctx context.Context, pelanggan request.UpdatePelanggan) {
-	panic("unimplemented")
+func (services *PelangganServicesImpl) Update(ctx context.Context, pelanggan request.UpdatePelanggan) {
+	err := services.Validate.StructCtx(ctx, pelanggan)
+	helper.Err(err)
+
+	tx, _ := services.DB.Begin()
+	services.PelangganRepository.Update(ctx, tx, domain.Pelanggan{
+		Id_pelanggan:   pelanggan.Id_pelanggan,
+		Username:       pelanggan.Username,
+		Password:       pelanggan.Password,
+		Name_pelanggan: pelanggan.Name,
+		Alamat:         pelanggan.Alamat,
+		Tarif_id:       pelanggan.Tarif_id,
+	})
+	defer helper.Tx(tx)
 }
 
 func NewPelangganServicesImpl(repository repository.PelangganRepository, db *sql.DB, validate *validator.Validate) PelangganServices {

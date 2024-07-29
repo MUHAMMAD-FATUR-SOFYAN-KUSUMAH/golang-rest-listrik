@@ -15,8 +15,21 @@ type PelangganControllerImpl struct {
 }
 
 // Delete implements PelangganController.
-func (*PelangganControllerImpl) Delete(writer http.ResponseWriter, request *http.Request) {
-	panic("unimplemented")
+func (controller *PelangganControllerImpl) Delete(writer http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	ctx := r.Context()
+
+	temp := request.PelangganRequest{}
+	helper.Decode_Json(r, &temp)
+
+	controller.pelangganservices.Delete(ctx, temp)
+
+	webrespons := response.WebResponse{
+		Code:   http.StatusAccepted,
+		Status: "accpeth",
+		Data:   "data deleted",
+	}
+
+	helper.Encode_Json(writer, webrespons)
 }
 
 // FindAll implements PelangganController.
@@ -49,13 +62,35 @@ func (controller *PelangganControllerImpl) FindById(writer http.ResponseWriter, 
 }
 
 // Save implements PelangganController.
-func (*PelangganControllerImpl) Save(writer http.ResponseWriter, request *http.Request) {
-	panic("unimplemented")
+func (controller *PelangganControllerImpl) Save(writer http.ResponseWriter, req *http.Request, p httprouter.Params) {
+	ctx := req.Context()
+	temp := request.AddPelanggan{}
+	helper.Decode_Json(req, &temp)
+
+	controller.pelangganservices.Save(ctx, temp)
+
+	webrespons := response.WebResponse{
+		Code:   http.StatusCreated,
+		Status: "created",
+		Data:   "data Created",
+	}
+	helper.Encode_Json(writer, webrespons)
 }
 
 // Update implements PelangganController.
-func (*PelangganControllerImpl) Update(writer http.ResponseWriter, request *http.Request) {
-	panic("unimplemented")
+func (controller *PelangganControllerImpl) Update(writer http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	ctx := r.Context()
+	temp := request.UpdatePelanggan{}
+	helper.Decode_Json(r, &temp)
+
+	controller.pelangganservices.Update(ctx, temp)
+
+	webrespons := response.WebResponse{
+		Code:   http.StatusAccepted,
+		Status: "accepted",
+		Data:   "data updated",
+	}
+	helper.Encode_Json(writer, webrespons)
 }
 
 func NewPelangganControllerImpl(pelangganservices services.PelangganServices) PelangganController {

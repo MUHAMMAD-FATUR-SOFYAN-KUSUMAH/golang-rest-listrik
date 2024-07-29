@@ -11,5 +11,5 @@ type PelangganServices interface {
 	FindById(ctx context.Context, id int) response.PelangganResponse
 	Save(ctx context.Context, pelanggan request.AddPelanggan)
 	Update(ctx context.Context, pelanggan request.UpdatePelanggan)
-	Delete(ctx context.Context, pelanggan request.UserSearch)
+	Delete(ctx context.Context, pelanggan request.PelangganRequest)
 }
