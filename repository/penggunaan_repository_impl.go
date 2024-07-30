@@ -9,13 +9,36 @@ import (
 
 type PenggunaanRepositoryImpl struct{}
 
+// FindAll implements PenggunaanRepository.
+func (*PenggunaanRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx, done chan []domain.Pelanggan) {
+	sql := "SELECT id_pelanggan, nama_pelanggan, alamat FROM public.pelanggan"
+
+	row, err := tx.QueryContext(ctx, sql)
+	helper.Err(err)
+
+	var model []domain.Pelanggan
+
+	for row.Next() {
+		var gory domain.Pelanggan
+		err := row.Scan(&gory.Id_pelanggan, &gory.Name_pelanggan, &gory.Alamat)
+		helper.Err(err)
+		model = append(model, gory)
+	}
+
+	defer func() {
+		done <- model
+		row.Close()
+	}()
+
+}
+
 // Delete implements PenggunaanRepository.
 func (*PenggunaanRepositoryImpl) Delete(ctx context.Context, tx *sql.Tx, penggunaan domain.Penggunaan) {
 	panic("unimplemented")
 }
 
 // FindAll implements PenggunaanRepository.
-func (*PenggunaanRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx, done chan []domain.Penggunaan, id int) {
+func (*PenggunaanRepositoryImpl) FindAllDetail(ctx context.Context, tx *sql.Tx, done chan []domain.Penggunaan, id int) {
 	sql := "SELECT id_penggunaan, bulan, tahun , meter_awal, meter_ahkir FROM public.penggunaan WHERE pelanggan = $1"
 
 	row, err := tx.QueryContext(ctx, sql, id)

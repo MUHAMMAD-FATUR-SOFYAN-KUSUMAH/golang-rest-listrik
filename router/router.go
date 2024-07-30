@@ -8,7 +8,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func NewRouter(tarif controller.TarifController, level controller.LevelController, user controller.UserController, pelanggan controller.PelangganController) *httprouter.Router {
+func NewRouter(tarif controller.TarifController, level controller.LevelController, user controller.UserController, pelanggan controller.PelangganController, penggunaan controller.PenggunaanController) *httprouter.Router {
 	router := httprouter.New()
 
 	router.GET("/api/tarif", helper.WrapMiddelware(httprouter.Handle(tarif.FindAll), middelware.LoggingMiddleware))
@@ -34,6 +34,12 @@ func NewRouter(tarif controller.TarifController, level controller.LevelControlle
 	router.POST("/api/pelanggan", pelanggan.Save)
 	router.DELETE("/api/pelanggan", pelanggan.Delete)
 	router.PATCH("/api/pelanggan", pelanggan.Update)
+
+	router.GET("/api/penggunaan", penggunaan.FindAll)
+	router.GET("/api/penggunaans", penggunaan.FindAllDetail)
+	router.POST("/api/penggunaan", penggunaan.Save)
+	router.DELETE("/api/penggunaan", penggunaan.Delete)
+	router.PATCH("/api/penggunaan", penggunaan.Update)
 
 	return router
 }

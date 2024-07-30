@@ -94,3 +94,39 @@ func PenggunaanResponses(penggunaan []domain.Penggunaan) []response.PenggunaanRe
 	}
 	return temp
 }
+
+func PenggunaanIndexPage(penggunaan domain.Pelanggan) response.PenggunaanResponseIndex {
+	return response.PenggunaanResponseIndex{
+		Id:        penggunaan.Id_pelanggan,
+		Nama:      penggunaan.Name_pelanggan,
+		Nomor_kwh: penggunaan.Nomor_kwh,
+		Alamat:    penggunaan.Alamat,
+	}
+}
+
+func PenggunaanIndexPages(penggunaan []domain.Pelanggan) []response.PenggunaanResponseIndex {
+	var temp []response.PenggunaanResponseIndex
+	for _, penggunaan := range penggunaan {
+		temp = append(temp, PenggunaanIndexPage(penggunaan))
+	}
+	return temp
+}
+
+func PenggunaanDetail(penggunaan domain.Penggunaan) response.PenggunaanResponseDetail {
+	return response.PenggunaanResponseDetail{
+		IdPenggunaan: penggunaan.Id_pengunaan,
+		Meter_awal:   penggunaan.Meter_awal,
+		Meter_akhir:  penggunaan.Meter_ahkir,
+		Bulan:        penggunaan.Bulan,
+		Tahun:        penggunaan.Tahun,
+		Total_Meter:  penggunaan.Meter_ahkir - penggunaan.Meter_awal,
+	}
+}
+
+func PenggunaanDeatils(penggunaan []domain.Penggunaan) []response.PenggunaanResponseDetail {
+	var temp []response.PenggunaanResponseDetail
+	for _, penggunaan := range penggunaan {
+		temp = append(temp, PenggunaanDetail(penggunaan))
+	}
+	return temp
+}

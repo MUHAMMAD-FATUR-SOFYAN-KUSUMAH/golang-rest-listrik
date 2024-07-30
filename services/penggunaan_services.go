@@ -7,9 +7,10 @@ import (
 )
 
 type PenggunaanServices interface {
-	FindAll(ctx context.Context, id int) []response.PenggunaanResponseDetail
+	FindAll(ctx context.Context) []response.PenggunaanResponseIndex
+	FindAllDetail(ctx context.Context, id int) []response.PenggunaanResponseDetail
 	FindById(ctx context.Context, id int, chann chan response.PenggunaanResponseDetail)
-	Save(ctx context.Context, penggunaan request.PenggunaanSave)
-	Update(ctx context.Context, penggunaan request.PenggunaanUpdated)
+	Save(ctx context.Context, penggunaan request.PenggunaanAdd)
+	Update(ctx context.Context, penggunaan request.PenggunaanUpdate)
 	Delete(ctx context.Context, penggunaan request.PenggunaanSearch)
 }
