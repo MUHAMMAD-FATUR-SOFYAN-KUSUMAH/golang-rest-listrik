@@ -56,10 +56,9 @@ func (*LevelRepositoryImpl) FindById(ctx context.Context, tx *sql.Tx, id int, ch
 
 // Save implements LevelRepository.
 func (controller *LevelRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, level domain.Level, done chan bool) {
-	sql := "INSERT INTO level (nama_level) VALUES ($1)"
-	_, err := tx.ExecContext(ctx, sql, level.Nama_level)
+	sql := "INSERT INTO level (nama_level) VALUES ($1) RETURNING id_level"
+	err := tx.QueryRowContext(ctx, sql, level.Nama_level).Scan(&level.Id_level)
 	helper.Err(err)
-
 	defer func() {
 		done <- true
 	}()

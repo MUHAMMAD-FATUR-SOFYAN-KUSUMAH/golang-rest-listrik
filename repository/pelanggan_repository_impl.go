@@ -43,10 +43,9 @@ func (*PelangganRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx, done ch
 // FindById implements PelangganRepository.
 func (*PelangganRepositoryImpl) FindById(ctx context.Context, tx *sql.Tx, id int, chann chan domain.Pelanggan) {
 	sql := "SELECT p.id_pelanggan, p.username, p.nama_pelanggan, p.nomor_kwh, p.alamat, p.tarif ,t.nama_tarif ,t.id_tarif FROM public.pelanggan AS p INNER JOIN public.tarif as t ON p.tarif = t.id_tarif WHERE p.id_pelanggan = $1"
-	row := tx.QueryRowContext(ctx, sql, id)
 	var pelanggan domain.Pelanggan
 	tempp := 0
-	err := row.Scan(&pelanggan.Id_pelanggan, &pelanggan.Username, &pelanggan.Name_pelanggan, &pelanggan.Nomor_kwh, &pelanggan.Alamat, &pelanggan.Tarif_id, &pelanggan.Tarif.Name, &tempp)
+	err := tx.QueryRowContext(ctx, sql, id).Scan(&pelanggan.Id_pelanggan, &pelanggan.Username, &pelanggan.Name_pelanggan, &pelanggan.Nomor_kwh, &pelanggan.Alamat, &pelanggan.Tarif_id, &pelanggan.Tarif.Name, &tempp)
 	helper.Err(err)
 	chann <- pelanggan
 }

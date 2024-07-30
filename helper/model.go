@@ -74,3 +74,23 @@ func PelangganResponses(pelanggan []domain.Pelanggan) []response.PelangganRespon
 	}
 	return temp
 }
+
+func PenggunaanResponse(penggunaan domain.Penggunaan) response.PenggunaanResponseDetail {
+	total_kwh := penggunaan.Meter_awal - penggunaan.Meter_ahkir
+	return response.PenggunaanResponseDetail{
+		IdPenggunaan: penggunaan.Id_pengunaan,
+		Meter_awal:   penggunaan.Meter_awal,
+		Meter_akhir:  penggunaan.Meter_ahkir,
+		Bulan:        penggunaan.Bulan,
+		Tahun:        penggunaan.Tahun,
+		Total_Meter:  total_kwh,
+	}
+}
+
+func PenggunaanResponses(penggunaan []domain.Penggunaan) []response.PenggunaanResponseDetail {
+	var temp []response.PenggunaanResponseDetail
+	for _, penggunaan := range penggunaan {
+		temp = append(temp, PenggunaanResponse(penggunaan))
+	}
+	return temp
+}
