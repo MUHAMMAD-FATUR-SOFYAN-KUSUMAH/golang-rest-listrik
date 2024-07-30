@@ -36,7 +36,7 @@ func NewRouter(tarif controller.TarifController, level controller.LevelControlle
 	router.PATCH("/api/pelanggan", pelanggan.Update)
 
 	router.GET("/api/penggunaan", penggunaan.FindAll)
-	router.GET("/api/penggunaans", penggunaan.FindAllDetail)
+	router.GET("/api/penggunaan/detail", penggunaan.FindAllDetail)
 	router.POST("/api/penggunaan", penggunaan.Save)
 	router.DELETE("/api/penggunaan", penggunaan.Delete)
 	router.PATCH("/api/penggunaan", penggunaan.Update)
