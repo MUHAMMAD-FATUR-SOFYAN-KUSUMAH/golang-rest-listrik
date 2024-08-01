@@ -2,7 +2,6 @@ package helper
 
 import (
 	"database/sql"
-	"golang_listrik/model/domain"
 )
 
 func Tx(q *sql.Tx) {
@@ -17,15 +16,14 @@ func Tx(q *sql.Tx) {
 	}
 }
 
-func AfterInsert(q *sql.Tx, id int) {
-	temp := domain.Tagihan{Penggunaan: id}
-	var awal int
-	var akhir int
-	sql := "SELECT pelanggan, meter_awal, meter_ahkir from public.penggunaan WHERE id_penggunaan = $1"
-	q.QueryRow(sql, id).Scan(&temp.Pelanggan, &awal, &akhir)
-
-	temp.Total = awal - akhir
+func AfterInsert(q *sql.Tx, total int, id int, id_penggunaan int) {
 	sql2 := "INSERT INTO public.tagihan (pelanggan, penggunaan, jumlah_meter) VALUES ($1, $2, $3)"
-	_, err := q.Exec(sql2, temp.Pelanggan, temp.Penggunaan, temp.Total)
+	_, err := q.Exec(sql2, id, id_penggunaan, total)
+	Err(err)
+}
+
+func AfterUpdate(q *sql.Tx, id int, total int) {
+	sql := "UPDATE public.tagihan SET jumlah_meter = $1 WHERE id_penggunaan = $2"
+	_, err := q.Exec(sql, total, id)
 	Err(err)
 }

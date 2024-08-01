@@ -20,7 +20,7 @@ type PenggunaanServicesImpl struct {
 
 // Delete implements PenggunaanServices.
 func (*PenggunaanServicesImpl) Delete(ctx context.Context, penggunaan request.PenggunaanSearch) {
-	panic("unimplemented")
+
 }
 
 // FindAll implements PenggunaanServices.
@@ -54,18 +54,50 @@ func (services *PenggunaanServicesImpl) FindAllDetail(ctx context.Context, id in
 }
 
 // FindById implements PenggunaanServices.
-func (*PenggunaanServicesImpl) FindById(ctx context.Context, id int, chann chan response.PenggunaanResponseDetail) {
-	panic("unimplemented")
+func (services *PenggunaanServicesImpl) FindById(ctx context.Context, id int, chann chan response.PenggunaanResponseDetail) {
+	maken := make(chan domain.Penggunaan)
+	tx, _ := services.Db.Begin()
+
+	go services.PenggunaanRepository.FindById(ctx, tx, id, maken)
+	res := helper.PenggunaanDetail(<-maken)
+
+	chann <- res
+	defer func() {
+		helper.Tx(tx)
+		close(maken)
+	}()
 }
 
 // Save implements PenggunaanServices.
-func (*PenggunaanServicesImpl) Save(ctx context.Context, penggunaan request.PenggunaanAdd) {
-	panic("unimplemented")
+func (services *PenggunaanServicesImpl) Save(ctx context.Context, penggunaan request.PenggunaanAdd) {
+	err_validator := services.validat.Struct(penggunaan)
+	tx, _ := services.Db.Begin()
+	helper.Err(err_validator)
+
+	temp := domain.Penggunaan{
+		Id_pelanggan: penggunaan.Id_pelanggan,
+		Bulan:        penggunaan.Bulan,
+		Tahun:        penggunaan.Tahun,
+		Meter_awal:   penggunaan.Meter_awal,
+		Meter_ahkir:  penggunaan.Meter_akhir,
+	}
+
+	services.PenggunaanRepository.Save(ctx, tx, temp)
 }
 
 // Update implements PenggunaanServices.
-func (*PenggunaanServicesImpl) Update(ctx context.Context, penggunaan request.PenggunaanUpdate) {
-	panic("unimplemented")
+func (services *PenggunaanServicesImpl) Update(ctx context.Context, penggunaan request.PenggunaanUpdate) {
+	err_validator_struct := services.validat.Struct(penggunaan)
+	tx, _ := services.Db.Begin()
+	helper.Err(err_validator_struct)
+
+	services.PenggunaanRepository.Update(ctx, tx, domain.Penggunaan{
+		Id_pengunaan: penggunaan.Id,
+		Meter_awal:   penggunaan.Meter_awal,
+		Meter_ahkir:  penggunaan.Meter_akhir,
+		Bulan:        penggunaan.Bulan,
+		Tahun:        penggunaan.Tahun,
+	})
 }
 
 func NewPenggunaanServices(validator *validator.Validate, db *sql.DB, Penggunaan repository.PenggunaanRepository) PenggunaanServices {

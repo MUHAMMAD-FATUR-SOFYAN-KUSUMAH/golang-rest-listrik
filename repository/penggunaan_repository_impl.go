@@ -34,7 +34,9 @@ func (*PenggunaanRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx, done c
 
 // Delete implements PenggunaanRepository.
 func (*PenggunaanRepositoryImpl) Delete(ctx context.Context, tx *sql.Tx, penggunaan domain.Penggunaan) {
-	panic("unimplemented")
+	sql := "DELETE FROM public.penggunaan WHERE id_pelanggan = $1"
+	_, err := tx.ExecContext(ctx, sql, penggunaan.Id_pelanggan)
+	helper.Err(err)
 }
 
 // FindAll implements PenggunaanRepository.
@@ -79,12 +81,20 @@ func (*PenggunaanRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, penggunaa
 	row := tx.QueryRowContext(ctx, sql, penggunaan.Id_pelanggan, penggunaan.Bulan, penggunaan.Tahun, penggunaan.Meter_awal, penggunaan.Meter_ahkir).Scan(&id)
 	helper.Err(row)
 
-	defer helper.AfterInsert(tx, id)
+	total := penggunaan.Meter_awal - penggunaan.Meter_ahkir
+
+	defer helper.AfterInsert(tx, total, id, penggunaan.Id_pelanggan)
 }
 
 // Update implements PenggunaanRepository.
 func (*PenggunaanRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, penggunaan domain.Penggunaan) {
-	panic("unimplemented")
+	sql := "UPDATE public.penggunaan SET bulan = $1, tahun = $2, meter_awal = $3, meter_ahkir = $4 WHERE id_penggunaan = $5"
+	_, err := tx.ExecContext(ctx, sql, penggunaan.Bulan, penggunaan.Tahun, penggunaan.Meter_awal, penggunaan.Meter_ahkir, penggunaan.Id_pengunaan)
+	helper.Err(err)
+
+	reuslt := penggunaan.Meter_awal - penggunaan.Meter_ahkir
+
+	defer helper.AfterUpdate(tx, penggunaan.Id_pengunaan, reuslt)
 }
 
 func NewPenggunaanRepositoryImpl() PenggunaanRepository {

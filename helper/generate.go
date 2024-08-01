@@ -19,3 +19,14 @@ func GenerateRandomNumeber() string {
 	}
 	return string(token)
 }
+
+func Generate_role(q int) string {
+	switch q {
+	case 1:
+		return "admin"
+	case 2:
+		return "user"
+	default:
+		return "user"
+	}
+}
