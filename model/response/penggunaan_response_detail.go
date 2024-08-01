@@ -1,10 +1,10 @@
 package response
 
 type PenggunaanResponseDetail struct {
-	IdPenggunaan int    `validate:"required" json:"id_penggunaan"`
-	Meter_awal   int    `validate:"required" json:"meter_awal"`
-	Meter_akhir  int    `validate:"required" json:"meter_akhir"`
-	Bulan        string `validate:"required" json:"bulan"`
-	Tahun        string `validate:"required" json:"tahun"`
-	Total_Meter  int    `validate:"required" json:"total_meter"`
+	IdPenggunaan int    `json:"id_penggunaan"`
+	Meter_awal   int    `json:"meter_awal"`
+	Meter_akhir  int    `json:"meter_akhir"`
+	Bulan        string `json:"bulan"`
+	Tahun        string `json:"tahun"`
+	Total_Meter  int    `json:"total_meter"`
 }

@@ -34,9 +34,14 @@ func (*PenggunaanRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx, done c
 
 // Delete implements PenggunaanRepository.
 func (*PenggunaanRepositoryImpl) Delete(ctx context.Context, tx *sql.Tx, penggunaan domain.Penggunaan) {
-	sql := "DELETE FROM public.penggunaan WHERE id_pelanggan = $1"
-	_, err := tx.ExecContext(ctx, sql, penggunaan.Id_pelanggan)
+	sql_2 := "DELETE FROM public.tagihan WHERE penggunaan = $1"
+	_, err_2 := tx.ExecContext(ctx, sql_2, penggunaan.Id_pengunaan)
+	helper.Err(err_2)
+
+	sql := "DELETE FROM public.penggunaan WHERE id_penggunaan = $1"
+	_, err := tx.ExecContext(ctx, sql, penggunaan.Id_pengunaan)
 	helper.Err(err)
+
 }
 
 // FindAll implements PenggunaanRepository.
@@ -81,9 +86,13 @@ func (*PenggunaanRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, penggunaa
 	row := tx.QueryRowContext(ctx, sql, penggunaan.Id_pelanggan, penggunaan.Bulan, penggunaan.Tahun, penggunaan.Meter_awal, penggunaan.Meter_ahkir).Scan(&id)
 	helper.Err(row)
 
-	total := penggunaan.Meter_awal - penggunaan.Meter_ahkir
+	total := penggunaan.Meter_ahkir - penggunaan.Meter_awal
 
-	defer helper.AfterInsert(tx, total, id, penggunaan.Id_pelanggan)
+	// insert tagihan
+	sql2 := "INSERT INTO public.tagihan (penggunaan, pelanggan, jumlah_meter) VALUES ($1, $2, $3)"
+	_, err := tx.ExecContext(ctx, sql2, id, penggunaan.Id_pelanggan, total)
+
+	helper.Err(err)
 }
 
 // Update implements PenggunaanRepository.
@@ -92,9 +101,12 @@ func (*PenggunaanRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, penggun
 	_, err := tx.ExecContext(ctx, sql, penggunaan.Bulan, penggunaan.Tahun, penggunaan.Meter_awal, penggunaan.Meter_ahkir, penggunaan.Id_pengunaan)
 	helper.Err(err)
 
-	reuslt := penggunaan.Meter_awal - penggunaan.Meter_ahkir
+	reuslt := penggunaan.Meter_ahkir - penggunaan.Meter_awal
 
-	defer helper.AfterUpdate(tx, penggunaan.Id_pengunaan, reuslt)
+	// insert tagihan
+	sql2 := "UPDATE public.tagihan SET jumlah_meter = $1 WHERE penggunaan = $2"
+	_, err_updated := tx.Exec(sql2, reuslt, penggunaan.Id_pengunaan)
+	helper.Err(err_updated)
 }
 
 func NewPenggunaanRepositoryImpl() PenggunaanRepository {

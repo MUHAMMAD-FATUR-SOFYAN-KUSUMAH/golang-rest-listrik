@@ -1,7 +1,9 @@
 package helper
 
 import (
+	"context"
 	"database/sql"
+	"fmt"
 )
 
 func Tx(q *sql.Tx) {
@@ -16,14 +18,11 @@ func Tx(q *sql.Tx) {
 	}
 }
 
-func AfterInsert(q *sql.Tx, total int, id int, id_penggunaan int) {
+func AfterInsert(ctx context.Context, q *sql.Tx, total int, id int, id_penggunaan int) {
 	sql2 := "INSERT INTO public.tagihan (pelanggan, penggunaan, jumlah_meter) VALUES ($1, $2, $3)"
-	_, err := q.Exec(sql2, id, id_penggunaan, total)
-	Err(err)
-}
-
-func AfterUpdate(q *sql.Tx, id int, total int) {
-	sql := "UPDATE public.tagihan SET jumlah_meter = $1 WHERE id_penggunaan = $2"
-	_, err := q.Exec(sql, total, id)
-	Err(err)
+	fmt.Println("sdkfs")
+	fmt.Println(id, id_penggunaan)
+	_, err := q.QueryContext(ctx, sql2, id, id_penggunaan, total)
+	q.Commit()
+	fmt.Println(err)
 }

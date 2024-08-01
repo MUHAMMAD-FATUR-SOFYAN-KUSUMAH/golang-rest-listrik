@@ -19,8 +19,16 @@ type PenggunaanServicesImpl struct {
 }
 
 // Delete implements PenggunaanServices.
-func (*PenggunaanServicesImpl) Delete(ctx context.Context, penggunaan request.PenggunaanSearch) {
+func (services *PenggunaanServicesImpl) Delete(ctx context.Context, penggunaan request.PenggunaanSearch, ch chan bool) {
+	err := services.validat.Struct(penggunaan)
+	helper.Err(err)
+	tx, _ := services.Db.Begin()
+	services.PenggunaanRepository.Delete(ctx, tx, domain.Penggunaan{Id_pengunaan: penggunaan.Id})
 
+	defer func() {
+		helper.Tx(tx)
+		ch <- true
+	}()
 }
 
 // FindAll implements PenggunaanServices.
@@ -83,6 +91,8 @@ func (services *PenggunaanServicesImpl) Save(ctx context.Context, penggunaan req
 	}
 
 	services.PenggunaanRepository.Save(ctx, tx, temp)
+
+	defer helper.Tx(tx)
 }
 
 // Update implements PenggunaanServices.
@@ -98,6 +108,8 @@ func (services *PenggunaanServicesImpl) Update(ctx context.Context, penggunaan r
 		Bulan:        penggunaan.Bulan,
 		Tahun:        penggunaan.Tahun,
 	})
+
+	defer helper.Tx(tx)
 }
 
 func NewPenggunaanServices(validator *validator.Validate, db *sql.DB, Penggunaan repository.PenggunaanRepository) PenggunaanServices {

@@ -12,5 +12,5 @@ type PenggunaanServices interface {
 	FindById(ctx context.Context, id int, chann chan response.PenggunaanResponseDetail)
 	Save(ctx context.Context, penggunaan request.PenggunaanAdd)
 	Update(ctx context.Context, penggunaan request.PenggunaanUpdate)
-	Delete(ctx context.Context, penggunaan request.PenggunaanSearch)
+	Delete(ctx context.Context, penggunaan request.PenggunaanSearch, chann chan bool)
 }

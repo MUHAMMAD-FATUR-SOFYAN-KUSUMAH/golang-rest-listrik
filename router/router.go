@@ -37,6 +37,7 @@ func NewRouter(tarif controller.TarifController, level controller.LevelControlle
 
 	router.GET("/api/penggunaan", penggunaan.FindAll)
 	router.GET("/api/penggunaan/detail", penggunaan.FindAllDetail)
+	router.GET("/api/penggunaans", penggunaan.FindById)
 	router.POST("/api/penggunaan", penggunaan.Save)
 	router.DELETE("/api/penggunaan", penggunaan.Delete)
 	router.PATCH("/api/penggunaan", penggunaan.Update)
