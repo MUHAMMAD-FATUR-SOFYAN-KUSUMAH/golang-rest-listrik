@@ -5,5 +5,5 @@ type Tagihan struct {
 	Pelanggan  int
 	Penggunaan int
 	Total      int
-	Status     bool
+	Status     int
 }

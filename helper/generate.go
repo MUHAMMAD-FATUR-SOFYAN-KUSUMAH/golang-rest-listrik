@@ -1,6 +1,9 @@
 package helper
 
-import "math/rand"
+import (
+	"fmt"
+	"math/rand"
+)
 
 func GenerateRandomToken() string {
 	letters := []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
@@ -28,5 +31,19 @@ func Generate_role(q int) string {
 		return "user"
 	default:
 		return "user"
+	}
+}
+
+func Int_StatusToString(q int) string {
+	fmt.Println(q)
+	switch q {
+	case 1:
+		return "belum lunas"
+	case 2:
+		return "menggunakan konfirmasi"
+	case 3:
+		return "lunas"
+	default:
+		return "ngacok"
 	}
 }

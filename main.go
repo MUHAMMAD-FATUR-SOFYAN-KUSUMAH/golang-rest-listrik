@@ -35,8 +35,9 @@ func main() {
 	usercontroller := controller.NewUserController(userservices)
 	pelanggancontroller := controller.NewPelangganControllerImpl(pelangganservices)
 	penggunaancontroller := controller.NewPenggunaanController(penggunaanservices)
+	tagihancontroller := controller.NewTagihanController(db)
 
-	routers := router.NewRouter(tarifcontroller, levelcontroller, usercontroller, pelanggancontroller, penggunaancontroller)
+	routers := router.NewRouter(tarifcontroller, levelcontroller, usercontroller, pelanggancontroller, penggunaancontroller, tagihancontroller)
 
 	server := http.Server{
 		Addr:    "192.168.1.12:8080",
