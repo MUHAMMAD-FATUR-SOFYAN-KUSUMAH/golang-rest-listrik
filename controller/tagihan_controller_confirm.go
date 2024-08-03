@@ -2,6 +2,7 @@ package controller
 
 import (
 	"database/sql"
+	"fmt"
 	"golang_listrik/helper"
 	"golang_listrik/model/request"
 	"golang_listrik/model/response"
@@ -42,4 +43,34 @@ func (c *TagihanController) FindPelangganTagihan(w http.ResponseWriter, r *http.
 	}
 
 	helper.Encode_Json(w, model)
+}
+
+func (c *TagihanController) UploadProfTagihan(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	err := r.ParseMultipartForm(10 << 20) // 10 MB
+	if err != nil {
+		http.Error(w, "Error parsing form data", http.StatusInternalServerError)
+		return
+	}
+
+	// Get file from form
+	file, header, err := r.FormFile("file")
+	if err != nil {
+		http.Error(w, "Error retrieving file", http.StatusInternalServerError)
+		return
+	}
+	fmt.Println(header.Filename)
+	fmt.Println(header.Size)
+	res, _ := header.Open()
+	defer func() {
+		file.Close()
+		res.Close()
+	}()
+
+	webresponse := response.WebResponse{
+		Code:   http.StatusOK,
+		Status: "ok",
+		Data:   "File uploaded successfully",
+	}
+
+	helper.Encode_Json(w, webresponse)
 }

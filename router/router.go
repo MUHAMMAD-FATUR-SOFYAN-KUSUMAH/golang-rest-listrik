@@ -43,6 +43,7 @@ func NewRouter(tarif controller.TarifController, level controller.LevelControlle
 	router.PATCH("/api/penggunaan", penggunaan.Update)
 
 	router.GET("/api/tagihan", tagihan.FindPelangganTagihan)
+	router.POST("/api/tagihan", tagihan.UploadProfTagihan)
 
 	return router
 }
