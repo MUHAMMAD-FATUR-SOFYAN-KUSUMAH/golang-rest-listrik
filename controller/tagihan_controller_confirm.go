@@ -7,8 +7,11 @@ import (
 	"golang_listrik/model/request"
 	"golang_listrik/model/response"
 	"net/http"
+	"path/filepath"
 
+	"github.com/joho/godotenv"
 	"github.com/julienschmidt/httprouter"
+	storage_go "github.com/supabase-community/storage-go"
 )
 
 type TagihanController struct {
@@ -46,24 +49,68 @@ func (c *TagihanController) FindPelangganTagihan(w http.ResponseWriter, r *http.
 }
 
 func (c *TagihanController) UploadProfTagihan(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	err := r.ParseMultipartForm(10 << 20) // 10 MB
-	if err != nil {
-		http.Error(w, "Error parsing form data", http.StatusInternalServerError)
-		return
-	}
+	env, _ := godotenv.Read(".env")
 
-	// Get file from form
 	file, header, err := r.FormFile("file")
 	if err != nil {
 		http.Error(w, "Error retrieving file", http.StatusInternalServerError)
 		return
 	}
-	fmt.Println(header.Filename)
-	fmt.Println(header.Size)
-	res, _ := header.Open()
+
+	var (
+		url       = env["Url"]
+		token     = env["Token"]
+		extension = filepath.Ext(header.Filename)
+	)
+
+	switch extension {
+	case ".jpg":
+		extension = "jpg"
+	case ".jpeg":
+		extension = "jpeg"
+	case ".png":
+		extension = "png"
+	default:
+		webresponse := response.WebResponse{
+			Code:   http.StatusNotAcceptable,
+			Status: "kesalahan format",
+			Data:   "File not uploaded",
+		}
+
+		helper.Encode_Json(w, webresponse)
+		return
+	}
+
+	er := r.ParseMultipartForm(10 << 20) // 10 MB
+	if er != nil {
+		http.Error(w, "must be less than 10 MB", http.StatusInternalServerError)
+		return
+	}
+
+	cc := storage_go.NewClient(url, token, nil)
+
+	// Get file from form
+
+	//content-type
+	str := fmt.Sprintf("image/%s", extension)
+
+	_, e := cc.UploadFile("Lolking", header.Filename, file, storage_go.FileOptions{
+		ContentType: &str,
+	})
+
+	if e != nil {
+		webresponse := response.WebResponse{
+			Code:   http.StatusNotAcceptable,
+			Status: "Not Acceptable",
+			Data:   "supabase upload error",
+		}
+
+		helper.Encode_Json(w, webresponse)
+		return
+	}
+
 	defer func() {
 		file.Close()
-		res.Close()
 	}()
 
 	webresponse := response.WebResponse{

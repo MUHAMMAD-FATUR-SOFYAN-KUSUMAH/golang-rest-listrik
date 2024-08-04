@@ -26,3 +26,12 @@ func AfterInsert(ctx context.Context, q *sql.Tx, total int, id int, id_penggunaa
 	q.Commit()
 	fmt.Println(err)
 }
+
+func UploadImageSql(ctx context.Context, q *sql.Tx, Name_image string, id int) {
+
+	sql := "UPDATE public.tagihan SET image = $1, status = 2 WHERE id_tagihan = $2"
+
+	_, err := q.ExecContext(ctx, sql, Name_image, id)
+
+	Err(err)
+}
