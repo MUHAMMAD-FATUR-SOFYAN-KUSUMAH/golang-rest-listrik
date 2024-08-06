@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"fmt"
 	"golang_listrik/model/domain"
 	"golang_listrik/model/response"
 )
@@ -127,6 +128,30 @@ func PenggunaanDeatils(penggunaan []domain.Penggunaan) []response.PenggunaanResp
 	var temp []response.PenggunaanResponseDetail
 	for _, penggunaan := range penggunaan {
 		temp = append(temp, PenggunaanDetail(penggunaan))
+	}
+	return temp
+}
+
+func PembayaranConf(pembayaran domain.Pembayaran) response.PembayaranConfResponse {
+	Res_role := Int_StatusToString(pembayaran.Status)
+
+	TotalBayar := fmt.Sprintf("Rp. %d", pembayaran.Total_bayar)
+
+	return response.PembayaranConfResponse{
+		Id_pembayaran:  pembayaran.Id_pembayaran,
+		No_kwh:         pembayaran.No_kwh,
+		Name_Pelanggan: pembayaran.Nama_pelanggan,
+		Tanggal_bayar:  pembayaran.Tanggal_pembayaran,
+		Total_Bayar:    TotalBayar,
+		Name_image:     pembayaran.Name_image,
+		Status:         Res_role,
+	}
+}
+
+func PembayaranConfs(pembayaran []domain.Pembayaran) []response.PembayaranConfResponse {
+	var temp []response.PembayaranConfResponse
+	for _, pembayaran := range pembayaran {
+		temp = append(temp, PembayaranConf(pembayaran))
 	}
 	return temp
 }

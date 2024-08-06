@@ -1,7 +1,6 @@
 package helper
 
 import (
-	"fmt"
 	"math/rand"
 )
 
@@ -35,14 +34,15 @@ func Generate_role(q int) string {
 }
 
 func Int_StatusToString(q int) string {
-	fmt.Println(q)
 	switch q {
 	case 1:
 		return "belum lunas"
 	case 2:
-		return "menggunakan konfirmasi"
+		return "menunggu konfirmasi"
 	case 3:
 		return "lunas"
+	case 4:
+		return "dibatalkan"
 	default:
 		return "ngacok"
 	}

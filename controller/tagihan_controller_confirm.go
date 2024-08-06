@@ -8,6 +8,7 @@ import (
 	"golang_listrik/model/response"
 	"net/http"
 	"path/filepath"
+	"strconv"
 
 	"github.com/joho/godotenv"
 	"github.com/julienschmidt/httprouter"
@@ -28,7 +29,7 @@ func (c *TagihanController) FindPelangganTagihan(w http.ResponseWriter, r *http.
 
 	helper.Decode_Json(r, &temp)
 	tx, _ := c.db.Begin()
-	sql := "SELECT pg.bulan , pg.tahun, t.status, t.jumlah_meter FROM public.tagihan as t JOIN public.penggunaan as pg ON pg.pelanggan = t.pelanggan WHERE t.pelanggan = $1"
+	sql := "SELECT t.id_tagihan, pg.bulan , pg.tahun, t.status, t.jumlah_meter FROM public.tagihan as t JOIN public.penggunaan as pg ON pg.pelanggan = t.pelanggan WHERE t.pelanggan = $1"
 
 	row, err := tx.Query(sql, temp.Id)
 
@@ -38,7 +39,7 @@ func (c *TagihanController) FindPelangganTagihan(w http.ResponseWriter, r *http.
 	for row.Next() {
 		var temp_int int
 		var gory response.TagihanResponse
-		err := row.Scan(&gory.Bulan, &gory.Tahun, &temp_int, &gory.Penggunaan_Kwh)
+		err := row.Scan(&gory.Id_tagihan, &gory.Bulan, &gory.Tahun, &temp_int, &gory.Penggunaan_Kwh)
 		helper.Err(err)
 		result := helper.Int_StatusToString(temp_int)
 		gory.Status = result
@@ -50,6 +51,7 @@ func (c *TagihanController) FindPelangganTagihan(w http.ResponseWriter, r *http.
 
 func (c *TagihanController) UploadProfTagihan(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	env, _ := godotenv.Read(".env")
+	tx, _ := c.db.Begin()
 
 	file, header, err := r.FormFile("file")
 	if err != nil {
@@ -87,10 +89,14 @@ func (c *TagihanController) UploadProfTagihan(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+	id := r.FormValue("id")
+	id_tagihan, err_convert := strconv.Atoi(id)
+
+	helper.Err(err_convert)
+	//upload to databae
+	helper.UploadImageSql(r.Context(), tx, header.Filename, id_tagihan)
+	// create client to supabase storage
 	cc := storage_go.NewClient(url, token, nil)
-
-	// Get file from form
-
 	//content-type
 	str := fmt.Sprintf("image/%s", extension)
 
@@ -111,6 +117,7 @@ func (c *TagihanController) UploadProfTagihan(w http.ResponseWriter, r *http.Req
 
 	defer func() {
 		file.Close()
+		helper.Tx(tx)
 	}()
 
 	webresponse := response.WebResponse{
