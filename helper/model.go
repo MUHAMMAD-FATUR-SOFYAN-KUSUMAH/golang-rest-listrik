@@ -134,12 +134,13 @@ func PenggunaanDeatils(penggunaan []domain.Penggunaan) []response.PenggunaanResp
 
 func PembayaranConf(pembayaran domain.Pembayaran) response.PembayaranConfResponse {
 	Res_role := Int_StatusToString(pembayaran.Status)
-
+	bulan_bayar := fmt.Sprintf("%s %s", pembayaran.Bulan, pembayaran.Tahun)
 	TotalBayar := fmt.Sprintf("Rp. %d", pembayaran.Total_bayar)
 
 	return response.PembayaranConfResponse{
 		Id_pembayaran:  pembayaran.Id_pembayaran,
 		No_kwh:         pembayaran.No_kwh,
+		Bulan_bayar:    bulan_bayar,
 		Name_Pelanggan: pembayaran.Nama_pelanggan,
 		Total_Bayar:    TotalBayar,
 		Name_image:     pembayaran.Name_image,

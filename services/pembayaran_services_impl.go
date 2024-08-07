@@ -3,8 +3,10 @@ package services
 import (
 	"context"
 	"database/sql"
+	"golang_listrik/helper"
 	"golang_listrik/model/domain"
 	"golang_listrik/model/request"
+	"golang_listrik/model/response"
 	"golang_listrik/repository"
 )
 
@@ -19,17 +21,34 @@ func (*PembayaranServicesImpl) Delete(ctx context.Context, pembayaran request.Le
 }
 
 // FindAllDetails implements PembayaranServices.
-func (services *PembayaranServicesImpl) FindAllDetails(ctx context.Context) {
+func (services *PembayaranServicesImpl) FindAllDetails(ctx context.Context) []response.PembayaranDetailResponse {
 	tx, _ := services.DB.Begin()
 	chann := make(chan []domain.Pembayaran)
 	go services.RepositoryPb.FindAllDetails(ctx, tx, chann)
 
-	model := <-chann
+	resonse_model := helper.PembayaranDetails(<-chann)
+	defer func() {
+		helper.Tx(tx)
+		close(chann)
+	}()
+
+	return resonse_model
 }
 
 // FindAllKonfrimasi implements PembayaranServices.
-func (*PembayaranServicesImpl) FindAllKonfrimasi(ctx context.Context) {
-	panic("unimplemented")
+func (services *PembayaranServicesImpl) FindAllKonfrimasi(ctx context.Context) []response.PembayaranConfResponse {
+	tx, _ := services.DB.Begin()
+	Onichan := make(chan []domain.Pembayaran)
+	go services.RepositoryPb.FindAllKonfrimasi(ctx, tx, Onichan)
+
+	resonse_model := helper.PembayaranConfs(<-Onichan)
+
+	defer func() {
+		helper.Tx(tx)
+		close(Onichan)
+	}()
+
+	return resonse_model
 }
 
 func NewPembayaranServices8(db *sql.DB, repositoryPb repository.PembayaranRepository) PembayaranServices {
