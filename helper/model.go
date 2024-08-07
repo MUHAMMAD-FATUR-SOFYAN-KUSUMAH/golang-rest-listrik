@@ -141,7 +141,6 @@ func PembayaranConf(pembayaran domain.Pembayaran) response.PembayaranConfRespons
 		Id_pembayaran:  pembayaran.Id_pembayaran,
 		No_kwh:         pembayaran.No_kwh,
 		Name_Pelanggan: pembayaran.Nama_pelanggan,
-		Tanggal_bayar:  pembayaran.Tanggal_pembayaran,
 		Total_Bayar:    TotalBayar,
 		Name_image:     pembayaran.Name_image,
 		Status:         Res_role,
@@ -152,6 +151,33 @@ func PembayaranConfs(pembayaran []domain.Pembayaran) []response.PembayaranConfRe
 	var temp []response.PembayaranConfResponse
 	for _, pembayaran := range pembayaran {
 		temp = append(temp, PembayaranConf(pembayaran))
+	}
+	return temp
+}
+
+func PembayaranDetail(pembayaran domain.Pembayaran) response.PembayaranDetailResponse {
+	bulan_bayar := fmt.Sprintf("%s %s", pembayaran.Bulan, pembayaran.Tahun)
+	NewFormat := pembayaran.Tanggal_pembayaran.Format("02-01-2006")
+	return response.PembayaranDetailResponse{
+		Id_pembayaran:  pembayaran.Id_pembayaran,
+		No_kwh:         pembayaran.No_kwh,
+		Name_Pelanggan: pembayaran.Nama_pelanggan,
+		Tanggal_bayar:  NewFormat,
+		Total_Bayar:    pembayaran.Total_bayar,
+		Name_image:     pembayaran.Name_image,
+		Status:         pembayaran.Status,
+		Meter_Awal:     pembayaran.Meter_awal,
+		Meter_Ahkir:    pembayaran.Meter_ahkir,
+		Total_Meter:    pembayaran.Total_meter,
+		Admin_Pemverif: pembayaran.Admin_name,
+		Bulan_bayar:    bulan_bayar,
+	}
+}
+
+func PembayaranDetails(pembayaran []domain.Pembayaran) []response.PembayaranDetailResponse {
+	var temp []response.PembayaranDetailResponse
+	for _, pembayaran := range pembayaran {
+		temp = append(temp, PembayaranDetail(pembayaran))
 	}
 	return temp
 }

@@ -16,7 +16,23 @@ func (*PembayaranRepositoryImpl) Delete(ctx context.Context, tx *sql.Tx, pembaya
 
 // FindAllDetails implements PembayaranRepository.
 func (*PembayaranRepositoryImpl) FindAllDetails(ctx context.Context, tx *sql.Tx, done chan []domain.Pembayaran) {
+	sql := "SELECT pb.tanggal_pembayaran, pb.biaya_admin, pb.total_bayar, tg.jumlah_meter , tg.status , tg.image , pn.meter_awal, pn.meter_ahkir, pn.bulan, pn.tahun, us.nama_admin, pg.nama_pelanggan FROM public.pembayaran AS pb JOIN public.user AS us ON pb.user = us.id_user JOIN public.tagihan AS tg ON pb.tagihan = tg.id_tagihan JOIN public.penggunaan AS pn ON tg.penggunaan = pn.id_penggunaan JOIN public.pelanggan AS pg ON pn.pelanggan = pg.id_pelanggan"
 
+	row, err := tx.QueryContext(ctx, sql)
+	helper.Err(err)
+
+	var temp []domain.Pembayaran
+
+	for row.Next() {
+		var gory domain.Pembayaran
+		row.Scan(&gory.Tanggal_pembayaran, &gory.Biaya_admin, &gory.Total_bayar, &gory.Total_meter, &gory.Status, &gory.Name_image, &gory.Meter_awal, &gory.Meter_ahkir, &gory.Bulan, &gory.Tahun, &gory.Admin_name, &gory.Nama_pelanggan)
+		temp = append(temp, gory)
+	}
+
+	defer func() {
+		done <- temp
+		row.Close()
+	}()
 }
 
 // FindAllKonfrimasi implements PembayaranRepository.
