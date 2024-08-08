@@ -16,8 +16,13 @@ type PembayaranServicesImpl struct {
 }
 
 // Delete implements PembayaranServices.
-func (*PembayaranServicesImpl) Delete(ctx context.Context, pembayaran request.LevelSearch) {
-	panic("unimplemented")
+func (controller *PembayaranServicesImpl) Delete(ctx context.Context, pembayaran request.LevelSearch) {
+	tx, _ := controller.DB.Begin()
+
+	controller.RepositoryPb.Delete(ctx, tx, domain.Pembayaran{
+		Id_tagihan: pembayaran.Id,
+	})
+	helper.Tx(tx)
 }
 
 // FindAllDetails implements PembayaranServices.

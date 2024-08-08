@@ -145,6 +145,7 @@ func PembayaranConf(pembayaran domain.Pembayaran) response.PembayaranConfRespons
 		Total_Bayar:    TotalBayar,
 		Name_image:     pembayaran.Name_image,
 		Status:         Res_role,
+		Tagihan_prim:   pembayaran.Id_tagihan,
 	}
 }
 
@@ -158,6 +159,7 @@ func PembayaranConfs(pembayaran []domain.Pembayaran) []response.PembayaranConfRe
 
 func PembayaranDetail(pembayaran domain.Pembayaran) response.PembayaranDetailResponse {
 	bulan_bayar := fmt.Sprintf("%s %s", pembayaran.Bulan, pembayaran.Tahun)
+	Res_role := Int_StatusToString(pembayaran.Status)
 	NewFormat := pembayaran.Tanggal_pembayaran.Format("02-01-2006")
 	return response.PembayaranDetailResponse{
 		Id_pembayaran:  pembayaran.Id_pembayaran,
@@ -166,7 +168,7 @@ func PembayaranDetail(pembayaran domain.Pembayaran) response.PembayaranDetailRes
 		Tanggal_bayar:  NewFormat,
 		Total_Bayar:    pembayaran.Total_bayar,
 		Name_image:     pembayaran.Name_image,
-		Status:         pembayaran.Status,
+		Status:         Res_role,
 		Meter_Awal:     pembayaran.Meter_awal,
 		Meter_Ahkir:    pembayaran.Meter_ahkir,
 		Total_Meter:    pembayaran.Total_meter,

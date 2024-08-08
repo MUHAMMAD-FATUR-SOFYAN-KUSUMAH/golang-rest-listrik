@@ -8,4 +8,5 @@ type PembayaranConfResponse struct {
 	Total_Bayar    any    `validate:"required" json:"total_bayar"`
 	Name_image     string `validate:"required" json:"name_image"`
 	Status         any    `validate:"required" json:"status"`
+	Tagihan_prim   int    `validate:"required" json:"tagihan_prim"`
 }

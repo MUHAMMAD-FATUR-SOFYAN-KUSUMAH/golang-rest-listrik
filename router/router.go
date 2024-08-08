@@ -45,8 +45,9 @@ func NewRouter(tarif controller.TarifController, level controller.LevelControlle
 	router.GET("/api/tagihan", tagihan.FindPelangganTagihan)
 	router.POST("/api/tagihan", tagihan.UploadProfTagihan)
 
-	router.GET("/api/pembayaran", Pembayaran.FindAllKonfirmasi)
+	router.GET("/api/pembayaran", Pembayaran.FindAllDetails)
 	router.GET("/api/pembayaranconf", Pembayaran.FindAllKonfirmasi)
+	router.DELETE("/api/pembayaran", Pembayaran.Delete)
 
 	return router
 }

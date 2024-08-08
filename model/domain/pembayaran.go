@@ -17,4 +17,5 @@ type Pembayaran struct {
 	Biaya_admin        int
 	Bulan              string
 	Tahun              string
+	Id_tagihan         int
 }

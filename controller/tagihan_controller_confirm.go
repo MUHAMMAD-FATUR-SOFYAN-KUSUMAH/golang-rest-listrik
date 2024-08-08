@@ -29,7 +29,7 @@ func (c *TagihanController) FindPelangganTagihan(w http.ResponseWriter, r *http.
 
 	helper.Decode_Json(r, &temp)
 	tx, _ := c.db.Begin()
-	sql := "SELECT t.id_tagihan, pg.bulan , pg.tahun, t.status, t.jumlah_meter FROM public.tagihan as t JOIN public.penggunaan as pg ON pg.pelanggan = t.pelanggan WHERE t.pelanggan = $1"
+	sql := "SELECT t.id_tagihan, pg.bulan , pg.tahun, t.status, t.jumlah_meter FROM public.tagihan as t JOIN public.penggunaan as pg ON pg.pelanggan = t.pelanggan WHERE t.pelanggan = $1 AND t.status = 1 OR t.status = 4"
 
 	row, err := tx.Query(sql, temp.Id)
 

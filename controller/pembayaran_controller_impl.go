@@ -2,6 +2,7 @@ package controller
 
 import (
 	"golang_listrik/helper"
+	"golang_listrik/model/request"
 	"golang_listrik/model/response"
 	"golang_listrik/services"
 	"net/http"
@@ -14,8 +15,18 @@ type PembayaranControllerImpl struct {
 }
 
 // Delete implements PembayaranController.
-func (*PembayaranControllerImpl) Delete(writer http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	panic("unimplemented")
+func (controller *PembayaranControllerImpl) Delete(writer http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	var temp request.LevelSearch
+	helper.Decode_Json(r, &temp)
+	controller.pembayaranService.Delete(r.Context(), temp)
+
+	webrespons := response.WebResponse{
+		Code:   http.StatusAccepted,
+		Status: "Pembayaran ditolak",
+		Data:   "mohon di ulangi kembali",
+	}
+
+	helper.Encode_Json(writer, webrespons)
 }
 
 // FindAllDetails implements PembayaranController.
