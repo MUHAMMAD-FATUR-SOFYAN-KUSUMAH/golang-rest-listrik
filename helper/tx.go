@@ -3,6 +3,8 @@ package helper
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"golang_listrik/model/domain"
 )
 
 func Tx(q *sql.Tx) {
@@ -41,4 +43,33 @@ func UploadImageSql(ctx context.Context, q *sql.Tx, Name_image string, id int) {
 
 	sql_pembayaran := "INSERT INTO public.pembayaran (tagihan, pelanggan, total_bayar) VALUES ($1, $2, $3)"
 	q.ExecContext(ctx, sql_pembayaran, id, pelanggan_id, result)
+}
+
+func AdminLogin(ctx context.Context, q *sql.Tx, username string, password string) (domain.User, error) {
+	var model domain.User
+	sql := "SELECT id_user,  name_admin, level , password FROM public.user WHERE username = $1"
+	err := q.QueryRowContext(ctx, sql, username).Scan(&model.Id_user, &model.Name, &model.Level, &model.Password)
+	if err != nil {
+		return domain.User{}, errors.New("data not found")
+	}
+
+	if password != model.Password {
+		return domain.User{}, errors.New("password not match")
+	}
+
+	return model, nil
+}
+func PelangganLogin(ctx context.Context, q *sql.Tx, username string, password string) (domain.Pelanggan, error) {
+	var model domain.Pelanggan
+	sql := "SELECT id_pelanggan,  nama_pelanggan,  password FROM public.user WHERE username = $1"
+	err := q.QueryRowContext(ctx, sql, username).Scan(&model.Id_pelanggan, &model.Name_pelanggan, &model.Password)
+	if err != nil {
+		return domain.Pelanggan{}, errors.New("data not found")
+	}
+
+	if password != model.Password {
+		return domain.Pelanggan{}, errors.New("password not match")
+	}
+
+	return model, nil
 }

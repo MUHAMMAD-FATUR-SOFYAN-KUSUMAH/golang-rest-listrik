@@ -184,3 +184,12 @@ func PembayaranDetails(pembayaran []domain.Pembayaran) []response.PembayaranDeta
 	}
 	return temp
 }
+
+func LoginResponse(user domain.User) response.LoginResponse {
+	status := Generate_role(user.Level)
+	return response.LoginResponse{
+		Id:   int(user.Id_user),
+		Name: user.Name,
+		Role: status,
+	}
+}
