@@ -64,7 +64,7 @@ func PelangganLogin(ctx context.Context, q *sql.Tx, username string, password st
 	sql := "SELECT id_pelanggan,  nama_pelanggan,  password FROM public.user WHERE username = $1"
 	err := q.QueryRowContext(ctx, sql, username).Scan(&model.Id_pelanggan, &model.Name_pelanggan, &model.Password)
 	if err != nil {
-		return domain.Pelanggan{}, errors.New("data not found")
+		return domain.Pelanggan{}, errors.New("username not found")
 	}
 
 	if password != model.Password {
