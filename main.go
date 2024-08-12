@@ -14,9 +14,16 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+func rootHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "default url")
+}
+
 func main() {
 	db := config.NewDb()
 	validasi := validator.New()
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", rootHandler)
 
 	tarifrepository := repository.NewTarifRepository()
 	levelreposiotry := repository.NewLevelRepository()
@@ -39,17 +46,26 @@ func main() {
 	penggunaancontroller := controller.NewPenggunaanController(penggunaanservices)
 	tagihancontroller := controller.NewTagihanController(db)
 	PembayaranController := controller.NewPembayaranController(pembayaranservices)
-	LoginController := controller.NewAuthControllerImpl(validasi, db)
+	// LoginController := controller.NewAuthControllerImpl(validasi, db)
 
-	routers := router.NewRouter(tarifcontroller, levelcontroller, usercontroller, pelanggancontroller, penggunaancontroller, tagihancontroller, PembayaranController, LoginController)
+	routers := router.NewRouter(tarifcontroller, levelcontroller, usercontroller, pelanggancontroller, penggunaancontroller, tagihancontroller, PembayaranController)
+
+	mux.Handle("/api/", http.StripPrefix("/api", routers))
+	// middelware add
+	initMiddelwarevalidasi := &middelware.Authmiddelware{
+		Handler: mux,
+	}
+
+	initMIddelwareCors := &middelware.CorsMiddelware{
+		Handler: initMiddelwarevalidasi,
+	}
 
 	server := http.Server{
 		Addr:    "192.168.1.2:8080",
-		Handler: middelware.Newmiddelware(routers),
+		Handler: initMIddelwareCors,
 	}
 
 	fmt.Println("status ok")
 	errsr := server.ListenAndServe()
 	helper.Err(errsr)
-
 }

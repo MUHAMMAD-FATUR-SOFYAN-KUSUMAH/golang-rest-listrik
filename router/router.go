@@ -1,9 +1,11 @@
 package router
 
 import (
+	"fmt"
 	"golang_listrik/controller"
 	"golang_listrik/helper"
 	"golang_listrik/middelware"
+	"net/http"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -11,6 +13,9 @@ import (
 func NewRouter(tarif controller.TarifController, level controller.LevelController, user controller.UserController, pelanggan controller.PelangganController, penggunaan controller.PenggunaanController, tagihan *controller.TagihanController, Pembayaran controller.PembayaranController) *httprouter.Router {
 	router := httprouter.New()
 
+	router.GET("/", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		fmt.Fprint(w, "Hello World")
+	})
 	router.GET("/api/tarif", helper.WrapMiddelware(httprouter.Handle(tarif.FindAll), middelware.LoggingMiddleware))
 	router.POST("/api/tarif", tarif.Save)
 	router.DELETE("/api/tarif", tarif.Deleted)

@@ -16,7 +16,11 @@ var client = make(map[string]int)
 var ClientTimeout = make(map[string]time.Time)
 
 type Authmiddelware struct {
-	handler http.Handler
+	Handler http.Handler
+}
+
+type CorsMiddelware struct {
+	Handler http.Handler
 }
 
 func addclient(ip string) {
@@ -27,17 +31,24 @@ func addcounter(ip string) {
 	client[ip]++
 }
 
-func Newmiddelware(handle http.Handler) *Authmiddelware {
-	return &Authmiddelware{
-		handler: handle,
-	}
-}
-
 func LoggingMiddleware(next httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		log.Printf("Request received: %s %s", r.Method, r.URL.Path)
 		next(w, r, ps)
 	}
+}
+
+func (cors *CorsMiddelware) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+	request.Header.Set("Access-Control-Allow-Origin", "*")
+	request.Header.Set("Access-Control-Allow-Credentials", "true")
+	request.Header.Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+	request.Header.Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE, PATCH")
+	if request.Method == "OPTIONS" {
+		writer.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	cors.Handler.ServeHTTP(writer, request)
 }
 
 func (middel *Authmiddelware) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
@@ -61,7 +72,7 @@ func (middel *Authmiddelware) ServeHTTP(writer http.ResponseWriter, request *htt
 			if time.Now().After(ClientTimeout[ip]) {
 				client[ip] = 0
 				delete(ClientTimeout, ip)
-				middel.handler.ServeHTTP(writer, request)
+				middel.Handler.ServeHTTP(writer, request)
 				return
 			}
 
@@ -77,7 +88,7 @@ func (middel *Authmiddelware) ServeHTTP(writer http.ResponseWriter, request *htt
 			helper.Encode_Json(writer, webResponse)
 			return
 		}
-		middel.handler.ServeHTTP(writer, request)
+		middel.Handler.ServeHTTP(writer, request)
 		addcounter(ip)
 	} else {
 		// error
