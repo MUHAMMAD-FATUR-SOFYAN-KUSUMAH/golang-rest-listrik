@@ -20,14 +20,14 @@ type AuthControllerImpl struct {
 func (controller *AuthControllerImpl) Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	ctx := r.Context()
 	temp := request.LoginRequest{}
-	helper.Decode_Json(r, temp)
+	helper.Decode_Json(r, &temp)
 
 	tx, _ := controller.Db.Begin()
 
 	err := controller.validate.Struct(temp)
 	helper.Err(err)
 
-	if temp.Username[0] != 54 {
+	if temp.Username[0] == 54 {
 		res, e := helper.AdminLogin(ctx, tx, temp.Username, temp.Password)
 
 		if e != nil {
@@ -37,6 +37,7 @@ func (controller *AuthControllerImpl) Login(w http.ResponseWriter, r *http.Reque
 				Data:   e.Error(),
 			}
 			helper.Encode_Json(w, webResponse)
+			return
 		}
 
 		webResponse := response.WebResponse{
@@ -45,6 +46,7 @@ func (controller *AuthControllerImpl) Login(w http.ResponseWriter, r *http.Reque
 			Data:   res,
 		}
 		helper.Encode_Json(w, webResponse)
+		return
 	} else {
 		res, e := helper.PelangganLogin(ctx, tx, temp.Username, temp.Password)
 
@@ -55,14 +57,22 @@ func (controller *AuthControllerImpl) Login(w http.ResponseWriter, r *http.Reque
 				Data:   e.Error(),
 			}
 			helper.Encode_Json(w, webResponse)
+			return
+		}
+
+		tempResponseLogin := response.LoginResponsePelanggan{
+			Name: res.Name_pelanggan,
+			Id:   res.Id_pelanggan,
 		}
 
 		webResponse := response.WebResponse{
 			Code:   http.StatusOK,
 			Status: "ok",
-			Data:   res,
+			Data:   tempResponseLogin,
 		}
+
 		helper.Encode_Json(w, webResponse)
+		return
 	}
 
 }

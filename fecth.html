@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch API Example</title>
+    <style>
+        /* Simple styling for the button */
+        #fetchButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #fetchButton:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Styling for the response output */
+        #response {
+            margin-top: 20px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fetch API Example</h1>
+    <button id="fetchButton">Login</button>
+    <div id="response"></div>
+
+    <script>
+        document.getElementById('fetchButton').addEventListener('click', async function() {
+            const button = document.getElementById('fetchButton');
+            const responseDiv = document.getElementById('response');
+
+            // Disable the button while the request is being processed
+            button.disabled = true;
+
+            try {
+                // Make the fetch request to the API
+                const response = await fetch('http://192.168.1.2:8080/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Api-Key': 'RAHASIA',
+                    },
+                    body: JSON.stringify({
+                        username: 'nanag',
+                        password: 'lambo129'
+                    })
+                });
+
+                // Check if the request was successful
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                // Parse the JSON response
+                const data = await response.json();
+
+                // Display the response in the response div
+                responseDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                // Handle errors and display error message
+                responseDiv.textContent = `Error: ${error.message}`;
+            } finally {
+                // Re-enable the button after the request is complete
+                button.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

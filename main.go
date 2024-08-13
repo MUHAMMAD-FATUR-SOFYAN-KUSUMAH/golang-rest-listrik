@@ -24,6 +24,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", rootHandler)
+	mux.HandleFunc("/auth", rootHandler)
 
 	tarifrepository := repository.NewTarifRepository()
 	levelreposiotry := repository.NewLevelRepository()
@@ -46,11 +47,13 @@ func main() {
 	penggunaancontroller := controller.NewPenggunaanController(penggunaanservices)
 	tagihancontroller := controller.NewTagihanController(db)
 	PembayaranController := controller.NewPembayaranController(pembayaranservices)
-	// LoginController := controller.NewAuthControllerImpl(validasi, db)
+	LoginController := controller.NewAuthControllerImpl(validasi, db)
 
 	routers := router.NewRouter(tarifcontroller, levelcontroller, usercontroller, pelanggancontroller, penggunaancontroller, tagihancontroller, PembayaranController)
+	AuthRouter := router.NewRouterAuthLogin(LoginController)
 
 	mux.Handle("/api/", http.StripPrefix("/api", routers))
+	mux.Handle("/auth/", http.StripPrefix("/auth", AuthRouter))
 	// middelware add
 	initMiddelwarevalidasi := &middelware.Authmiddelware{
 		Handler: mux,

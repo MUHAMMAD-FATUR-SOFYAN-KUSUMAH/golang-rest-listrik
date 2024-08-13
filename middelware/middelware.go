@@ -1,6 +1,7 @@
 package middelware
 
 import (
+	"fmt"
 	"golang_listrik/helper"
 	"golang_listrik/model/response"
 	"log"
@@ -39,15 +40,16 @@ func LoggingMiddleware(next httprouter.Handle) httprouter.Handle {
 }
 
 func (cors *CorsMiddelware) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	request.Header.Set("Access-Control-Allow-Origin", "*")
-	request.Header.Set("Access-Control-Allow-Credentials", "true")
-	request.Header.Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
-	request.Header.Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE, PATCH")
+	fmt.Println("berhasil set cors")
+	writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Authorization, ETag, X-Api-Key")
+	writer.Header().Set("Access-Control-Expose-Headers", "ETag, X-Api-Key")
+	writer.Header().Set("Access-Control-Allow-Origin", "*")
+	writer.Header().Set("Access-Control-Allow-Credentials", "true")
+	writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE, PATCH")
 	if request.Method == "OPTIONS" {
 		writer.WriteHeader(http.StatusNoContent)
 		return
 	}
-
 	cors.Handler.ServeHTTP(writer, request)
 }
 
@@ -59,6 +61,7 @@ func (middel *Authmiddelware) ServeHTTP(writer http.ResponseWriter, request *htt
 	}
 
 	if "RAHASIA" == request.Header.Get("x-api-key") {
+		fmt.Println(request.Header.Get("x-api-key"))
 		if client[ip] >= 50 {
 
 			_, counter := ClientTimeout[ip]
