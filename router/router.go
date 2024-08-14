@@ -22,7 +22,7 @@ func NewRouter(tarif controller.TarifController, level controller.LevelControlle
 	router.PATCH("/api/tarif", tarif.Updated)
 	router.GET("/api/tarifs", tarif.FindById)
 
-	router.GET("/api/level", level.FindAll)
+	router.GET("/api/level", helper.WrapMiddelware(httprouter.Handle(level.FindAll), middelware.LoggingMiddleware))
 	router.POST("/api/level", level.Save)
 	router.DELETE("/api/level", level.Delete)
 	router.PATCH("/api/level", level.Update)
