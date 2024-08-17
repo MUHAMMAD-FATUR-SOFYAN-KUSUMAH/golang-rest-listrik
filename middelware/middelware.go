@@ -40,10 +40,9 @@ func LoggingMiddleware(next httprouter.Handle) httprouter.Handle {
 }
 
 func (cors *CorsMiddelware) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	fmt.Println("berhasil set cors")
 	writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Authorization, ETag, X-Api-Key")
 	writer.Header().Set("Access-Control-Expose-Headers", "ETag, X-Api-Key")
-	writer.Header().Set("Access-Control-Allow-Origin", "*")
+	writer.Header().Set("Access-Control-Allow-Origin", "http://127.0.0.1:5500")
 	writer.Header().Set("Access-Control-Allow-Credentials", "true")
 	writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE, PATCH")
 	if request.Method == "OPTIONS" {
